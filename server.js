@@ -3,10 +3,22 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 require('dotenv').config();
 
+const allowedOrigins = [
+  'chrome-extension://ijgbmmijngepmkkhdldokcijnagbbdfe'
+];
+
 const app = express();
 const PORT = 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 app.use(express.json());
 
 app.post('/analyze', async (req, res) => {
